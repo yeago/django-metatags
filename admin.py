@@ -2,4 +2,7 @@ from django.contrib import admin
 
 from metatag import models as mm
 
-admin.site.register(mm.URLMetatags)
+class MetaAdmin(admin.ModelAdmin):
+	list_display = ('path','title','description','keywords')
+
+admin.site.register(mm.URLMetatags,MetaAdmin)
