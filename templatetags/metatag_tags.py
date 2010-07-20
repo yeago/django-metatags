@@ -1,42 +1,37 @@
 from django import template
+from django.template import Template
+from django.core.urlresolvers import resolve
 
 from metatag.models import URLMetatags
 
+from metatag.resolve_to_name_snippet import resolve_to_name
+
 register = template.Library()
 
-class MetatagNode(template.Node):
+class URLMetatagsNode(template.Node):
 	def render(self, context):
 		request = context['request']
-		instance = context.get('object')
+		meta = None
 		try:
-			context['metatag'] = URLMetatags.objects.get(path=request.path).as_dict()
+			url = resolve_to_name(request.path)
+			meta = URLMetatags.objects.get(url=url)
 		except URLMetatags.DoesNotExist:
-			if not instance:
-				return ''
+			try:
+				meta = URLMetatags.objects.get(url=request.path)
+			except URLMetatags.DoesNotExist:
+				pass
 
-			"""
-			Below we only touch all the 'metatags' files.
-			"""
-			from django.conf import settings
-			for i in settings.INSTALLED_APPS:
-				try:
-					module = __import__('%s.metatags' % i)
-					for count, app in enumerate(i.split('.')):
-						if count == 0:
-							continue
-					module = getattr(module,app)
 
-					module = getattr(module,'metatags')
-				except ImportError:
-					pass
+		if meta:
+			meta_dict = {'title': meta.title, 'description': meta.description, 'keywords': meta.keywords }
 
-			from metatag.special_class import list_of_subclasses
-			for sub in list_of_subclasses:
-				if sub.model == instance.__class__:
-					context['metatag'] = sub.get_dict(instance)
-					break
+			for key in meta_dict:
+				meta_dict[key] = Template(meta_dict[key])
+				meta_dict[key] = meta_dict[key].render(context)
+
+			context['metatag'] = meta_dict
 		return '' 
 	
 @register.tag()
 def metatag_populate(parser,token):
-	return MetatagNode()
+	return URLMetatagsNode()

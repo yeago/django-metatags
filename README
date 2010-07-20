@@ -1,35 +1,14 @@
 This is my take on solving the awkward relationship between 
 Django Templates and Metatag/title information.
 
-Like many other projects, this one takes two approaches:
-
-	- Defining meta information per URL/path (like flatpages)
-	- Defining meta information per object
-
-My approach staunchly defends user simplicity. The down-side is that
-if you want your object-level tags to be processed, they must be
-passed into the template as 'object'. Not much of a constraint, IMHO.
+My approach staunchly defends user simplicity. The down-side (if you 
+want to call it that) is that there is template logic in the admin. 
 
 INSTALL:
 
 1) Blah blah blah INSTALLED_APPS, Syncdb.
 
-2) Load the "metatag_tags" templatetag in your base tag and call {% metatag_populate %}
+2) Add some URLMetatags model instances
 
-If you only need URL based metastuff, you can stop here. You now have a 
-'metatags' dictionary object in your templates. Go crazy!
+3) Load the "metatag_tags" templatetag in your base tag and call {% metatag_populate %}
 
-3) Define a 'metatags.py' file in your app
-
-4) Import and subclass metatag.Metatag like so:
-
-
-   class MyObjectMetatag(Metatag):
-   	model = MyModel
-	@staticmethod
-   	def get_dict(instance):
-   		return {'title': instance.wtvr, \
-   		'description': instance.wtvr, 'keywords': instance.wtvr }
-
-
-5) Enjoy
