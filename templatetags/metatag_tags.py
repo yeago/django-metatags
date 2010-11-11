@@ -1,4 +1,5 @@
 from django import template
+from django.db.models import Q
 from django.template import Template
 from django.core.urlresolvers import resolve
 
@@ -11,25 +12,21 @@ register = template.Library()
 class URLMetatagsNode(template.Node):
 	def render(self, context):
 		request = context['request']
-		meta = None
 		try:
 			url = resolve_to_name(request.path)
-			meta = URLMetatags.objects.get(url=url)
+			meta = URLMetatags.objects.get(Q(url=url)|Q(url=request.path))
+
 		except URLMetatags.DoesNotExist:
-			try:
-				meta = URLMetatags.objects.get(url=request.path)
-			except URLMetatags.DoesNotExist:
-				pass
+			return ''
 
+		meta_dict = {}
 
-		if meta:
-			meta_dict = {'title': meta.title, 'description': meta.description, 'keywords': meta.keywords }
+		for key in URLMetatags._meta.get_all_field_names():
+			att = getattr(meta,key)
+			t = Template(att)
+			meta_dict[key] = t.render(context)
 
-			for key in meta_dict:
-				meta_dict[key] = Template(meta_dict[key])
-				meta_dict[key] = meta_dict[key].render(context)
-
-			context['metatag'] = meta_dict
+		context['metatag'] = meta_dict
 		return '' 
 	
 @register.tag()
