@@ -22,9 +22,10 @@ class URLMetatagsNode(template.Node):
 		meta_dict = {}
 
 		for key in URLMetatags._meta.get_all_field_names():
-			att = getattr(meta,key)
-			t = Template(att)
-			meta_dict[key] = t.render(context)
+			att = getattr(meta,key,None)
+			if att:
+				t = Template(att)
+				meta_dict[key] = t.render(context)
 
 		context['metatag'] = meta_dict
 		return '' 
