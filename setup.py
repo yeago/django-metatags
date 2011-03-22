@@ -3,12 +3,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='django-subscription',
+    name='django-metatags',
     version="0.0",
     author='Steve Yeago',
     author_email='subsume@gmail.com',
-    description='Managing subscriptions in Django',
-    url='http://github.com/subsume/django-subscription',
+    description='Managing metatags in Django',
+    url='http://github.com/subsume/django-metatags',
     packages=find_packages(),
     include_package_data=True,
     classifiers=[
