@@ -14,7 +14,7 @@ register = template.Library()
 class URLMetatagsNode(template.Node):
     def render(self, context):
         request = context['request']
-        in_cache = cache.get("metatag-%s" % request.path)
+        in_cache = cache.get("metatag-%s" % request.path.replace(" ","-")) # replace is python-memcache bugfix
 
         if in_cache:
             context['metatag'] = in_cache
