@@ -18,6 +18,7 @@ class URLMetatagsNode(template.Node):
             meta = URLMetatags.objects.get(Q(url=url) | Q(url=request.path))
 
         except URLMetatags.DoesNotExist:
+            context['metatag'] = None
             return ''
 
         meta_dict = {}
