@@ -4,8 +4,16 @@ from django.urls import URLResolver as RegexURLResolver, URLPattern as RegexURLP
 
 __all__ = ('resolve_to_name',)
 
+def get_regex(resolver_or_pattern):
+    """Utility method for django's deprecated resolver.regex"""
+    try:
+        regex = resolver_or_pattern.regex
+    except AttributeError:
+        regex = resolver_or_pattern.pattern.regex
+    return regex
+
 def _pattern_resolve_to_name(self, path):
-    match = self.regex.search(path)
+    match = get_regex(self).search(path)
     if match:
         name = ""
         if self.name:
@@ -18,7 +26,7 @@ def _pattern_resolve_to_name(self, path):
 
 def _resolver_resolve_to_name(self, path):
     tried = []
-    match = self.regex.search(path)
+    match = get_regex(self).search(path)
     if match:
         new_path = path[match.end():]
         for pattern in self.url_patterns:
