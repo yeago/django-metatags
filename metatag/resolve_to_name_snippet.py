@@ -1,6 +1,6 @@
 # http://djangosnippets.org/snippets/1378/
 
-from django.urls import RegexURLResolver, RegexURLPattern, Resolver404, get_resolver
+from django.urls import URLResolver as RegexURLResolver, URLPattern as RegexURLPattern, Resolver404, get_resolver
 
 __all__ = ('resolve_to_name',)
 
