@@ -1,6 +1,6 @@
 # http://djangosnippets.org/snippets/1378/
 
-from django.core.urlresolvers import RegexURLResolver, RegexURLPattern, Resolver404, get_resolver
+from django.urls import RegexURLResolver, RegexURLPattern, Resolver404, get_resolver
 
 __all__ = ('resolve_to_name',)
 
@@ -24,7 +24,7 @@ def _resolver_resolve_to_name(self, path):
         for pattern in self.url_patterns:
             try:
                 name = pattern.resolve_to_name(new_path)
-            except Resolver404, e:
+            except Resolver404 as e:
                 tried.extend([(pattern.regex.pattern + '   ' + t) for t in e.args[0]['tried']])
             else:
                 if name:
