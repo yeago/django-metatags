@@ -33,11 +33,11 @@ def _resolver_resolve_to_name(self, path):
             try:
                 name = pattern.resolve_to_name(new_path)
             except Resolver404 as e:
-                tried.extend([(pattern.regex.pattern + '   ' + t) for t in e.args[0]['tried']])
+                tried.extend([(get_regex(pattern).pattern + '   ' + t) for t in e.args[0]['tried']])
             else:
                 if name:
                     return name
-                tried.append(pattern.regex.pattern)
+                tried.append(get_regex(pattern).pattern)
 	#raise Resolver404, {'tried': tried, 'path': new_path}
 
 
